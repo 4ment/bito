@@ -58,7 +58,11 @@ void SitePattern::Compress() {
     SymbolVector pattern(alignment_.SequenceCount());
     for (const auto &iter : tag_taxon_map_) {
       size_t taxon_number = static_cast<size_t>(UnpackFirstInt(iter.first));
-      pattern[taxon_number] = symbol_table.at(alignment_.at(iter.second)[i]);
+      try {
+        pattern[taxon_number] = symbol_table.at(alignment_.at(iter.second)[i]);
+      } catch (std::out_of_range e) {
+        pattern[taxon_number] = symbol_table.at('-');
+      }
     }
     if (patterns.find(pattern) == patterns.end()) {
       SafeInsert(patterns, pattern, 1.);
