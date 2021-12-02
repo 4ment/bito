@@ -185,3 +185,37 @@ EigenVectorXd RatioGradientOfHeightGradientEigen(
   }
   return eigen_output;
 }
+
+EigenVectorXd GradientLogDeterminantJacobianEigen(const RootedTree &tree) {
+  size_t leaf_count = tree.LeafCount();
+  size_t root_id = tree.Topology()->Id();
+  std::vector<double> log_time = GetLogTimeArray(tree);
+  std::vector<double> gradientLogJacobianDeterminant =
+      UpdateGradientUnWeightedLogDensity(tree, log_time);
+  gradientLogJacobianDeterminant[root_id - leaf_count] =
+      UpdateHeightParameterGradientUnweightedLogDensity(tree, log_time);
+
+  for (size_t i = 0; i < gradientLogJacobianDeterminant.size() - 1; i++) {
+    gradientLogJacobianDeterminant[i] -= 1.0 / tree.height_ratios_[i];
+  }
+
+  EigenVectorXd eigen_output(gradientLogJacobianDeterminant.size());
+  for (size_t i = 0; i < gradientLogJacobianDeterminant.size(); ++i) {
+    eigen_output(i) = gradientLogJacobianDeterminant[i];
+  }
+  return eigen_output;
+}
+
+double LogDeterminantJacobianEigen(const RootedTree &tree) {
+  double log_det_jacobian = 0.0;
+  size_t leaf_count = tree.LeafCount();
+  tree.Topology()->TripleIdPreorderBifurcating(
+      [&log_det_jacobian, &tree, leaf_count](int node_id, int sister_id,
+                                             int parent_id) {
+        if (node_id >= leaf_count) {
+          log_det_jacobian +=
+              std::log(tree.node_heights_[parent_id] - tree.node_bounds_[node_id]);
+        }
+      });
+  return log_det_jacobian;
+}

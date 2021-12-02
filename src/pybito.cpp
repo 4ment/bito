@@ -378,6 +378,11 @@ PYBIND11_MODULE(bito, m) {
   // FUNCTIONS
   m.def("ratio_gradient_of_height_gradient", &RatioGradientOfHeightGradientEigen,
         "Obtain a ratio gradient from a height gradient.");
+  m.def("gradient_log_det_jacobian_height_transform",
+        &GradientLogDeterminantJacobianEigen,
+        "Obtain gradient of log determinant of Jacobian of node height transform.");
+  m.def("log_det_jacobian_height_transform", &LogDeterminantJacobianEigen,
+        "Obtain log determinant of Jacobian of node height transform.");
 
   // CLASS
   // GPInstance

@@ -44,3 +44,6 @@ std::vector<double> RatioGradientOfBranchGradient(
 // This should go away with #205.
 EigenVectorXd RatioGradientOfHeightGradientEigen(const RootedTree &tree,
                                                  EigenConstVectorXdRef height_gradient);
+
+EigenVectorXd GradientLogDeterminantJacobianEigen(const RootedTree &tree);
+double LogDeterminantJacobianEigen(const RootedTree &tree);
